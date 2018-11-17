@@ -120,6 +120,7 @@ declare module 'discord.js' {
 	}
 
 	export class CategoryChannel extends GuildChannel {
+		public type: 'category'
 		public readonly children: Collection<Snowflake, GuildChannel>;
 	}
 
@@ -127,9 +128,9 @@ declare module 'discord.js' {
 		constructor(client: Client, data?: object);
 		public readonly createdAt: Date;
 		public readonly createdTimestamp: number;
+		public type: 'unknown' | string
 		public deleted: boolean;
 		public id: Snowflake;
-		public type: 'dm' | 'group' | 'text' | 'voice' | 'category' | 'unknown';
 		public delete(reason?: string): Promise<Channel>;
 		public toString(): string;
 	}
@@ -165,9 +166,9 @@ declare module 'discord.js' {
 		public sweepMessages(lifetime?: number): number;
 		public toJSON(): object;
 
-		public on(event: 'channelCreate' | 'channelDelete', listener: (channel: Channel) => void): this;
-		public on(event: 'channelPinsUpdate', listener: (channel: Channel, time: Date) => void): this;
-		public on(event: 'channelUpdate', listener: (oldChannel: Channel, newChannel: Channel) => void): this;
+		public on(event: 'channelCreate' | 'channelDelete', listener: (channel: ChannelUnion) => void): this;
+		public on(event: 'channelPinsUpdate', listener: (channel: TextChannelUnion, time: Date) => void): this;
+		public on(event: 'channelUpdate', listener: (oldChannel: ChannelUnion, newChannel: ChannelUnion) => void): this;
 		public on(event: 'debug' | 'warn', listener: (info: string) => void): this;
 		public on(event: 'disconnect', listener: (event: any, shardID: number) => void): this;
 		public on(event: 'emojiCreate' | 'emojiDelete', listener: (emoji: GuildEmoji) => void): this;
@@ -193,15 +194,15 @@ declare module 'discord.js' {
 		public on(event: 'roleCreate' | 'roleDelete', listener: (role: Role) => void): this;
 		public on(event: 'roleUpdate', listener: (oldRole: Role, newRole: Role) => void): this;
 		public on(event: 'shardReady', listener: (shardID: number) => void): this;
-		public on(event: 'typingStart' | 'typingStop', listener: (channel: Channel, user: User) => void): this;
+		public on(event: 'typingStart' | 'typingStop', listener: (channel: TextChannelUnion, user: User) => void): this;
 		public on(event: 'userUpdate', listener: (oldUser: User, newUser: User) => void): this;
 		public on(event: 'voiceStateUpdate', listener: (oldState: VoiceState | undefined, newState: VoiceState) => void): this;
 		public on(event: 'webhookUpdate', listener: (channel: TextChannel) => void): this;
 		public on(event: string, listener: Function): this;
 
-		public once(event: 'channelCreate' | 'channelDelete', listener: (channel: Channel) => void): this;
-		public once(event: 'channelPinsUpdate', listener: (channel: Channel, time: Date) => void): this;
-		public once(event: 'channelUpdate', listener: (oldChannel: Channel, newChannel: Channel) => void): this;
+		public once(event: 'channelCreate' | 'channelDelete', listener: (channel: ChannelUnion) => void): this;
+		public once(event: 'channelPinsUpdate', listener: (channel: TextChannelUnion, time: Date) => void): this;
+		public once(event: 'channelUpdate', listener: (oldChannel: ChannelUnion, newChannel: ChannelUnion) => void): this;
 		public once(event: 'debug' | 'warn', listener: (info: string) => void): this;
 		public once(event: 'disconnect', listener: (event: any, shardID: number) => void): this;
 		public once(event: 'emojiCreate' | 'emojiDelete', listener: (emoji: GuildEmoji) => void): this;
@@ -227,7 +228,7 @@ declare module 'discord.js' {
 		public once(event: 'roleCreate' | 'roleDelete', listener: (role: Role) => void): this;
 		public once(event: 'roleUpdate', listener: (oldRole: Role, newRole: Role) => void): this;
 		public once(event: 'shardReady', listener: (shardID: number) => void): this;
-		public once(event: 'typingStart' | 'typingStop', listener: (channel: Channel, user: User) => void): this;
+		public once(event: 'typingStart' | 'typingStop', listener: (channel: TextChannelUnion, user: User) => void): this;
 		public once(event: 'userUpdate', listener: (oldUser: User, newUser: User) => void): this;
 		public once(event: 'voiceStateUpdate', listener: (oldState: VoiceState | undefined, newState: VoiceState) => void): this;
 		public once(event: 'webhookUpdate', listener: (channel: TextChannel) => void): this;
@@ -358,6 +359,7 @@ declare module 'discord.js' {
 
 	export class DMChannel extends TextBasedChannel(Channel) {
 		constructor(client: Client, data?: object);
+		public type: 'dm'
 		public messages: MessageStore;
 		public recipient: User;
 	}
@@ -378,6 +380,7 @@ declare module 'discord.js' {
 
 	export class GroupDMChannel extends TextBasedChannel(Channel) {
 		constructor(client: Client, data?: object);
+		public type: 'group'
 		public applicationID: Snowflake;
 		public icon: string;
 		public managed: boolean;
@@ -400,6 +403,7 @@ declare module 'discord.js' {
 		constructor(client: Client, data: object);
 		private _sortedRoles(): Collection<Snowflake, Role>;
 		private _sortedChannels(channel: Channel): Collection<Snowflake, GuildChannel>;
+		// Irrelevant to Issue #2957, but this typing should be CategoryChannel
 		private _memberSpeakUpdate(user: Snowflake, speaking: boolean): void;
 
 		protected setup(data: any): void;
@@ -639,7 +643,7 @@ declare module 'discord.js' {
 	}
 
 	export class Message extends Base {
-		constructor(client: Client, data: object, channel: TextChannel | DMChannel | GroupDMChannel);
+		constructor(client: Client, data: object, channel: TextChannelUnion);
 		private _edits: Message[];
 		private patch(data: object): void;
 
@@ -647,7 +651,7 @@ declare module 'discord.js' {
 		public application: ClientApplication;
 		public attachments: Collection<Snowflake, MessageAttachment>;
 		public author: User;
-		public channel: TextChannel | DMChannel | GroupDMChannel;
+		public channel: TextChannelUnion;
 		public readonly cleanContent: string;
 		public content: string;
 		public readonly createdAt: Date;
@@ -706,8 +710,8 @@ declare module 'discord.js' {
 	}
 
 	export class MessageCollector extends Collector<Snowflake, Message> {
-		constructor(channel: TextChannel | DMChannel | GroupDMChannel, filter: CollectorFilter, options?: MessageCollectorOptions);
-		public channel: Channel;
+		constructor(channel: TextChannelUnion, filter: CollectorFilter, options?: MessageCollectorOptions);
+		public channel: TextChannelUnion;
 		public options: MessageCollectorOptions;
 		public received: number;
 
@@ -1055,6 +1059,7 @@ declare module 'discord.js' {
 	export class TextChannel extends TextBasedChannel(GuildChannel) {
 		constructor(guild: Guild, data?: object);
 		public readonly members: Collection<Snowflake, GuildMember>;
+		public type: 'text'
 		public messages: MessageStore;
 		public nsfw: boolean;
 		public rateLimitPerUser: number;
@@ -1144,6 +1149,7 @@ declare module 'discord.js' {
 
 	export class VoiceChannel extends GuildChannel {
 		constructor(guild: Guild, data?: object);
+		public type: 'voice'
 		public bitrate: number;
 		public readonly connection: VoiceConnection;
 		public readonly full: boolean;
@@ -1463,6 +1469,9 @@ declare module 'discord.js' {
 //#endregion
 
 //#region Typedefs
+
+	type ChannelUnion = VoiceChannel | TextChannel | GroupDMChannel | DMChannel | CategoryChannel
+	type TextChannelUnion =  TextChannel | GroupDMChannel | DMChannel
 
 	type ActivityFlagsString = 'INSTANCE' | 'JOIN' | 'SPECTATE' | 'JOIN_REQUEST' | 'SYNC' | 'PLAY';
 
@@ -1931,7 +1940,7 @@ declare module 'discord.js' {
 
 	type MessageResolvable = Message | Snowflake;
 
-	type MessageTarget = TextChannel | DMChannel | GroupDMChannel | User | GuildMember | Webhook | WebhookClient;
+	type MessageTarget = TextChannelUnion | User | GuildMember | Webhook | WebhookClient;
 
 	type MessageType = 'DEFAULT'
 		| 'RECIPIENT_ADD'

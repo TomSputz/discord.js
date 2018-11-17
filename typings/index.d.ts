@@ -1321,7 +1321,7 @@ declare module 'discord.js' {
 
 //#region Stores
 
-	export class ChannelStore extends DataStore<Snowflake, Channel, typeof Channel, ChannelResolvable> {
+	export class ChannelStore extends DataStore<Snowflake, ChannelUnion, ChannelUnion, ChannelResolvable> {
 		constructor(client: Client, iterable: Iterable<any>, options?: { lru: boolean });
 		constructor(client: Client, options?: { lru: boolean });
 	}
@@ -1350,7 +1350,7 @@ declare module 'discord.js' {
 		public resolveIdentifier(emoji: EmojiIdentifierResolvable): string;
 	}
 
-	export class GuildChannelStore extends DataStore<Snowflake, GuildChannel, typeof GuildChannel, GuildChannelResolvable> {
+	export class GuildChannelStore extends DataStore<Snowflake, GuildChannelUnion, GuildChannelUnion, GuildChannelResolvable> {
 		constructor(guild: Guild, iterable?: Iterable<any>);
 		public create(name: string, options?: GuildCreateChannelOptions): Promise<TextChannel | VoiceChannel>;
 	}
@@ -1471,6 +1471,7 @@ declare module 'discord.js' {
 //#region Typedefs
 
 	type ChannelUnion = VoiceChannel | TextChannel | GroupDMChannel | DMChannel | CategoryChannel
+	type GuildChannelUnion = VoiceChannel | TextChannel | CategoryChannel
 	type TextChannelUnion =  TextChannel | GroupDMChannel | DMChannel
 
 	type ActivityFlagsString = 'INSTANCE' | 'JOIN' | 'SPECTATE' | 'JOIN_REQUEST' | 'SYNC' | 'PLAY';

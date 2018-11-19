@@ -120,7 +120,7 @@ declare module 'discord.js' {
 	}
 
 	export class CategoryChannel extends GuildChannel {
-		public type: 'category'
+		public type: 'category';
 		public readonly children: Collection<Snowflake, GuildChannel>;
 	}
 
@@ -128,7 +128,7 @@ declare module 'discord.js' {
 		constructor(client: Client, data?: object);
 		public readonly createdAt: Date;
 		public readonly createdTimestamp: number;
-		public type: 'unknown' | string
+		public type: 'unknown' | string;
 		public deleted: boolean;
 		public id: Snowflake;
 		public delete(reason?: string): Promise<Channel>;
@@ -359,7 +359,7 @@ declare module 'discord.js' {
 
 	export class DMChannel extends TextBasedChannel(Channel) {
 		constructor(client: Client, data?: object);
-		public type: 'dm'
+		public type: 'dm';
 		public messages: MessageStore;
 		public recipient: User;
 	}
@@ -380,7 +380,7 @@ declare module 'discord.js' {
 
 	export class GroupDMChannel extends TextBasedChannel(Channel) {
 		constructor(client: Client, data?: object);
-		public type: 'group'
+		public type: 'group';
 		public applicationID: Snowflake;
 		public icon: string;
 		public managed: boolean;
@@ -1059,7 +1059,7 @@ declare module 'discord.js' {
 	export class TextChannel extends TextBasedChannel(GuildChannel) {
 		constructor(guild: Guild, data?: object);
 		public readonly members: Collection<Snowflake, GuildMember>;
-		public type: 'text'
+		public type: 'text';
 		public messages: MessageStore;
 		public nsfw: boolean;
 		public rateLimitPerUser: number;
@@ -1149,7 +1149,7 @@ declare module 'discord.js' {
 
 	export class VoiceChannel extends GuildChannel {
 		constructor(guild: Guild, data?: object);
-		public type: 'voice'
+		public type: 'voice';
 		public bitrate: number;
 		public readonly connection: VoiceConnection;
 		public readonly full: boolean;
@@ -1470,9 +1470,9 @@ declare module 'discord.js' {
 
 //#region Typedefs
 
-	type ChannelUnion = VoiceChannel | TextChannel | GroupDMChannel | DMChannel | CategoryChannel
-	type GuildChannelUnion = VoiceChannel | TextChannel | CategoryChannel
-	type TextChannelUnion =  TextChannel | GroupDMChannel | DMChannel
+	type ChannelUnion = VoiceChannel | TextChannel | GroupDMChannel | DMChannel | CategoryChannel;
+	type GuildChannelUnion = VoiceChannel | TextChannel | CategoryChannel;
+	type TextChannelUnion =  TextChannel | GroupDMChannel | DMChannel;
 
 	type ActivityFlagsString = 'INSTANCE' | 'JOIN' | 'SPECTATE' | 'JOIN_REQUEST' | 'SYNC' | 'PLAY';
 

@@ -645,7 +645,7 @@ declare module 'discord.js' {
 		public application: ClientApplication<S>;
 		public attachments: Collection<Snowflake, MessageAttachment>;
 		public author: S['User'];
-		public channel: S["TextChannel"] | S["DMChannel"];
+		public channel: S['TextChannel'] | S['DMChannel'];
 		public readonly cleanContent: string;
 		public content: string;
 		public readonly createdAt: Date;
